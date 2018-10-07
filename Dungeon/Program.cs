@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Dungeon
+﻿namespace Dungeon
 {
     class Program
     {
         static void Main(string[] args)
         {
+            AppDungeon app = new AppDungeon();
+
+            app.run(1280, 720, 1.0f);
         }
     }
 }
