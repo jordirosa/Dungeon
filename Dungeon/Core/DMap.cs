@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Collections.Generic;
 
 using SDLEngine;
 
@@ -19,10 +20,14 @@ namespace Dungeon.Core
         private SDLImage[,,,] mTileset;
         private int[,,] mMapData;
 
+        private List<DCharacter> mCharacters;
+
         SDLGraphics mGraphics;
 
         public DMap(SDLGraphics graphics)
         {
+            this.mCharacters = new List<DCharacter>();
+
             this.clearMap();
 
             this.mGraphics = graphics;
@@ -38,6 +43,8 @@ namespace Dungeon.Core
             this.mScale = 1.0f;
 
             this.mTileset = new SDLImage[1, DGlobal.MAP_DISTANCES_NUM, DGlobal.MAP_POSITIONS_NUM, DGlobal.MAP_ORIENTATIONS_NUM];
+
+            this.mCharacters.Clear();
         }
 
         public void loadMap(string assetName)
@@ -74,9 +81,11 @@ namespace Dungeon.Core
                     mMapData[x, y, (int)DGlobal.MapOrientations.CEIL] = int.Parse(mapDataSplitted[5]);
                 }
             }
+
+            mapFile.Close();
         }
 
-        public void loadTileset(string assetName)
+        private void loadTileset(string assetName)
         {
             //Position: CENTER
             loadTile(DGlobal.MapDistances.NONE, DGlobal.MapPositions.CENTER, assetName);
@@ -122,7 +131,7 @@ namespace Dungeon.Core
             }
         }
 
-        public void loadTile(DGlobal.MapDistances distance, DGlobal.MapPositions position, string assetName)
+        private void loadTile(DGlobal.MapDistances distance, DGlobal.MapPositions position, string assetName)
         {
             mTileset[0, (int)distance, (int)position, (int)DGlobal.MapOrientations.NORTH] = this.mGraphics.loadImage(buildImageFullPath(assetName, distance, position, DGlobal.MapOrientations.NORTH));
             mTileset[0, (int)distance, (int)position, (int)DGlobal.MapOrientations.EAST] = this.mGraphics.loadImage(buildImageFullPath(assetName, distance, position, DGlobal.MapOrientations.EAST));
@@ -141,40 +150,40 @@ namespace Dungeon.Core
             return imageFullPath;
         }
 
-        public void draw(int x, int y, DGlobal.MapOrientations orientation)
+        public void draw(int x, int y, DGlobal.MapOrientations lookOrientation)
         {
-            this.drawTile(x, y, DGlobal.MapDistances.END, DGlobal.MapPositions.CENTER, orientation);
-            this.drawTile(x, y, DGlobal.MapDistances.END, DGlobal.MapPositions.LEFT1, orientation);
-            this.drawTile(x, y, DGlobal.MapDistances.END, DGlobal.MapPositions.LEFT2, orientation);
-            this.drawTile(x, y, DGlobal.MapDistances.END, DGlobal.MapPositions.RIGHT1, orientation);
-            this.drawTile(x, y, DGlobal.MapDistances.END, DGlobal.MapPositions.RIGHT2, orientation);
+            this.drawTile(x, y, DGlobal.MapDistances.END, DGlobal.MapPositions.CENTER, lookOrientation);
+            this.drawTile(x, y, DGlobal.MapDistances.END, DGlobal.MapPositions.LEFT1, lookOrientation);
+            this.drawTile(x, y, DGlobal.MapDistances.END, DGlobal.MapPositions.LEFT2, lookOrientation);
+            this.drawTile(x, y, DGlobal.MapDistances.END, DGlobal.MapPositions.RIGHT1, lookOrientation);
+            this.drawTile(x, y, DGlobal.MapDistances.END, DGlobal.MapPositions.RIGHT2, lookOrientation);
 
-            this.drawTile(x, y, DGlobal.MapDistances.FAR, DGlobal.MapPositions.CENTER, orientation);
-            this.drawTile(x, y, DGlobal.MapDistances.FAR, DGlobal.MapPositions.LEFT1, orientation);
-            this.drawTile(x, y, DGlobal.MapDistances.END, DGlobal.MapPositions.LEFT2, orientation);
-            this.drawTile(x, y, DGlobal.MapDistances.FAR, DGlobal.MapPositions.RIGHT1, orientation);
-            this.drawTile(x, y, DGlobal.MapDistances.END, DGlobal.MapPositions.RIGHT2, orientation);
+            this.drawTile(x, y, DGlobal.MapDistances.FAR, DGlobal.MapPositions.CENTER, lookOrientation);
+            this.drawTile(x, y, DGlobal.MapDistances.FAR, DGlobal.MapPositions.LEFT1, lookOrientation);
+            this.drawTile(x, y, DGlobal.MapDistances.END, DGlobal.MapPositions.LEFT2, lookOrientation);
+            this.drawTile(x, y, DGlobal.MapDistances.FAR, DGlobal.MapPositions.RIGHT1, lookOrientation);
+            this.drawTile(x, y, DGlobal.MapDistances.END, DGlobal.MapPositions.RIGHT2, lookOrientation);
 
-            this.drawTile(x, y, DGlobal.MapDistances.MID, DGlobal.MapPositions.CENTER, orientation);
-            this.drawTile(x, y, DGlobal.MapDistances.MID, DGlobal.MapPositions.LEFT1, orientation);
-            this.drawTile(x, y, DGlobal.MapDistances.MID, DGlobal.MapPositions.LEFT2, orientation);
-            this.drawTile(x, y, DGlobal.MapDistances.MID, DGlobal.MapPositions.RIGHT1, orientation);
-            this.drawTile(x, y, DGlobal.MapDistances.MID, DGlobal.MapPositions.RIGHT2, orientation);
+            this.drawTile(x, y, DGlobal.MapDistances.MID, DGlobal.MapPositions.CENTER, lookOrientation);
+            this.drawTile(x, y, DGlobal.MapDistances.MID, DGlobal.MapPositions.LEFT1, lookOrientation);
+            this.drawTile(x, y, DGlobal.MapDistances.MID, DGlobal.MapPositions.LEFT2, lookOrientation);
+            this.drawTile(x, y, DGlobal.MapDistances.MID, DGlobal.MapPositions.RIGHT1, lookOrientation);
+            this.drawTile(x, y, DGlobal.MapDistances.MID, DGlobal.MapPositions.RIGHT2, lookOrientation);
 
-            this.drawTile(x, y, DGlobal.MapDistances.NEAR, DGlobal.MapPositions.CENTER, orientation);
-            this.drawTile(x, y, DGlobal.MapDistances.NEAR, DGlobal.MapPositions.LEFT1, orientation);
-            this.drawTile(x, y, DGlobal.MapDistances.NEAR, DGlobal.MapPositions.LEFT2, orientation);
-            this.drawTile(x, y, DGlobal.MapDistances.NEAR, DGlobal.MapPositions.RIGHT1, orientation);
-            this.drawTile(x, y, DGlobal.MapDistances.NEAR, DGlobal.MapPositions.RIGHT2, orientation);
+            this.drawTile(x, y, DGlobal.MapDistances.NEAR, DGlobal.MapPositions.CENTER, lookOrientation);
+            this.drawTile(x, y, DGlobal.MapDistances.NEAR, DGlobal.MapPositions.LEFT1, lookOrientation);
+            this.drawTile(x, y, DGlobal.MapDistances.NEAR, DGlobal.MapPositions.LEFT2, lookOrientation);
+            this.drawTile(x, y, DGlobal.MapDistances.NEAR, DGlobal.MapPositions.RIGHT1, lookOrientation);
+            this.drawTile(x, y, DGlobal.MapDistances.NEAR, DGlobal.MapPositions.RIGHT2, lookOrientation);
 
-            this.drawTile(x, y, DGlobal.MapDistances.NONE, DGlobal.MapPositions.CENTER, orientation);
-            this.drawTile(x, y, DGlobal.MapDistances.NONE, DGlobal.MapPositions.LEFT1, orientation);
-            this.drawTile(x, y, DGlobal.MapDistances.NONE, DGlobal.MapPositions.LEFT2, orientation);
-            this.drawTile(x, y, DGlobal.MapDistances.NONE, DGlobal.MapPositions.RIGHT1, orientation);
-            this.drawTile(x, y, DGlobal.MapDistances.NONE, DGlobal.MapPositions.RIGHT2, orientation);
+            this.drawTile(x, y, DGlobal.MapDistances.NONE, DGlobal.MapPositions.CENTER, lookOrientation);
+            this.drawTile(x, y, DGlobal.MapDistances.NONE, DGlobal.MapPositions.LEFT1, lookOrientation);
+            this.drawTile(x, y, DGlobal.MapDistances.NONE, DGlobal.MapPositions.LEFT2, lookOrientation);
+            this.drawTile(x, y, DGlobal.MapDistances.NONE, DGlobal.MapPositions.RIGHT1, lookOrientation);
+            this.drawTile(x, y, DGlobal.MapDistances.NONE, DGlobal.MapPositions.RIGHT2, lookOrientation);
         }
 
-        public void drawTile(int x, int y, DGlobal.MapDistances distance, DGlobal.MapPositions position, DGlobal.MapOrientations lookOrientation)
+        private void drawTile(int x, int y, DGlobal.MapDistances distance, DGlobal.MapPositions position, DGlobal.MapOrientations lookOrientation)
         {
             DGlobal.MapOrientations orientation = lookOrientation;
 
@@ -188,6 +197,7 @@ namespace Dungeon.Core
                 this.drawTileOrientation(x, y, distance, position, orientation, lookOrientation);
                 this.drawTileOrientation(x, y, distance, position, DGlobal.MapOrientations.FLOOR, lookOrientation);
                 this.drawTileOrientation(x, y, distance, position, DGlobal.MapOrientations.CEIL, lookOrientation);
+                this.drawCharacter(x, y, distance, position, lookOrientation);
                 DGlobal.turnRight(ref orientation);
                 this.drawTileOrientation(x, y, distance, position, orientation, lookOrientation);
             }
@@ -200,6 +210,7 @@ namespace Dungeon.Core
                 this.drawTileOrientation(x, y, distance, position, orientation, lookOrientation);
                 this.drawTileOrientation(x, y, distance, position, DGlobal.MapOrientations.FLOOR, lookOrientation);
                 this.drawTileOrientation(x, y, distance, position, DGlobal.MapOrientations.CEIL, lookOrientation);
+                this.drawCharacter(x, y, distance, position, lookOrientation);
                 DGlobal.turnRight(ref orientation);
                 this.drawTileOrientation(x, y, distance, position, orientation, lookOrientation);
             }
@@ -212,12 +223,13 @@ namespace Dungeon.Core
                 this.drawTileOrientation(x, y, distance, position, orientation, lookOrientation);
                 this.drawTileOrientation(x, y, distance, position, DGlobal.MapOrientations.FLOOR, lookOrientation);
                 this.drawTileOrientation(x, y, distance, position, DGlobal.MapOrientations.CEIL, lookOrientation);
+                this.drawCharacter(x, y, distance, position, lookOrientation);
                 DGlobal.turnLeft(ref orientation);
                 this.drawTileOrientation(x, y, distance, position, orientation, lookOrientation);
             }
         }
 
-        public void drawTileOrientation(int x, int y, DGlobal.MapDistances distance, DGlobal.MapPositions position, DGlobal.MapOrientations orientation, DGlobal.MapOrientations lookOrientation)
+        private void drawTileOrientation(int x, int y, DGlobal.MapDistances distance, DGlobal.MapPositions position, DGlobal.MapOrientations orientation, DGlobal.MapOrientations lookOrientation)
         {
             int positionX = x;
             int positionY = y;
@@ -264,8 +276,56 @@ namespace Dungeon.Core
             }
         }
 
+        private void drawCharacter(int x, int y, DGlobal.MapDistances distance, DGlobal.MapPositions position, DGlobal.MapOrientations lookOrientation)
+        {
+            DCharacter character = null;
+
+            int positionX = x;
+            int positionY = y;
+
+            switch (position)
+            {
+                case DGlobal.MapPositions.RIGHT1:
+                    DGlobal.moveRight(lookOrientation, ref positionX, ref positionY, 1);
+                    break;
+                case DGlobal.MapPositions.RIGHT2:
+                    DGlobal.moveRight(lookOrientation, ref positionX, ref positionY, 2);
+                    break;
+                case DGlobal.MapPositions.LEFT1:
+                    DGlobal.moveLeft(lookOrientation, ref positionX, ref positionY, 1);
+                    break;
+                case DGlobal.MapPositions.LEFT2:
+                    DGlobal.moveLeft(lookOrientation, ref positionX, ref positionY, 2);
+                    break;
+            }
+
+            DGlobal.moveForward(lookOrientation, ref positionX, ref positionY, (int)distance);
+
+            foreach (DCharacter characterTMP in this.mCharacters)
+            {
+                if (characterTMP.getPositionX() == positionX && characterTMP.getPositionY() == positionY)
+                {
+                    character = characterTMP;
+                    break;
+                }
+            }
+
+            if (character != null)
+            {
+                character.draw(distance, position);
+            }
+        }
+
         public bool checkWalkable(int x, int y, DGlobal.MapOrientations orientation)
         {
+            foreach (DCharacter characterTMP in this.mCharacters)
+            {
+                if (characterTMP.getPositionX() == x && characterTMP.getPositionY() == y)
+                {
+                    return false;
+                }
+            }
+
             if (x < this.mWidth && x >= 0 && y < this.mHeight && y >= 0)
             {
                 if (this.mMapData[x, y, (int)orientation] == 0)
@@ -281,6 +341,11 @@ namespace Dungeon.Core
             {
                 return false;
             }
+        }
+
+        public void addCharacter(DCharacter character)
+        {
+            this.mCharacters.Add(character);
         }
     }
 }

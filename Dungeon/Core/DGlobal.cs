@@ -33,6 +33,16 @@
             CEIL = 5
         }
 
+        public const int CHARACTER_PIECES_NUM = 5;
+        public enum CharacterPieces
+        {
+            BODY = 0,
+            ARM_LEFT = 1,
+            ARM_RIGHT = 2,
+            ARM_LEFT_EQUIPPED = 3,
+            ARM_RIGHT_EQUIPPED = 4
+        }
+
         public static string mapDistanceToString(MapDistances distance)
         {
             switch(distance)
@@ -87,6 +97,25 @@
                     return "F";
                 case MapOrientations.CEIL:
                     return "C";
+                default:
+                    return "";
+            }
+        }
+
+        public static string characterPieceToString(CharacterPieces piece)
+        {
+            switch(piece)
+            {
+                case CharacterPieces.BODY:
+                    return "Body";
+                case CharacterPieces.ARM_LEFT:
+                    return "Arm_L";
+                case CharacterPieces.ARM_RIGHT:
+                    return "Arm_R";
+                case CharacterPieces.ARM_LEFT_EQUIPPED:
+                    return "Arm_LE";
+                case CharacterPieces.ARM_RIGHT_EQUIPPED:
+                    return "Arm_RE";
                 default:
                     return "";
             }

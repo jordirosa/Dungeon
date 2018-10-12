@@ -30,6 +30,22 @@ namespace Dungeon.Screens
 
             map = new DMap(this.mApp.graphics);
             map.loadMap("TestMap");
+
+            DCharacter testCharacter = new DCharacter(this.mApp.graphics);
+            testCharacter.loadCharacter("Goblin");
+            testCharacter.setPosition(1, 2);
+            map.addCharacter(testCharacter);
+
+            testCharacter = new DCharacter(this.mApp.graphics);
+            testCharacter.loadCharacter("Goblin");
+            testCharacter.setPosition(2, 4);
+            map.addCharacter(testCharacter);
+
+            testCharacter = new DCharacter(this.mApp.graphics);
+            testCharacter.loadCharacter("Goblin");
+            testCharacter.setPosition(3, 6);
+            testCharacter.setRightArmEquipped(true);
+            map.addCharacter(testCharacter);
         }
 
         public override void update(SDL.SDL_Event eventSDL)
@@ -78,6 +94,11 @@ namespace Dungeon.Screens
                         break;
                 }
             }
+
+            int mouseX;
+            int mouseY;
+            SDL.SDL_GetMouseState(out mouseX, out mouseY);
+            System.Console.WriteLine("Mouse X: " + mouseX + " Y: " + mouseY);
         }
 
         public override void draw()
